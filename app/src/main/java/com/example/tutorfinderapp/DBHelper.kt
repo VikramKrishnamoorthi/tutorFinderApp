@@ -39,6 +39,7 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                  givesHomework: String, contactInfo: ContactInfo) {
         val gson = Gson()
         val contactJson = gson.toJson(contactInfo)
+        //If you open this for the first time this will be an error. You need to press the sync option that will show up and it'll work
 
         val values = ContentValues().apply {
             put(NAME_COL, name)
