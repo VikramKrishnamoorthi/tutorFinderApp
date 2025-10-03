@@ -45,12 +45,12 @@ class MainActivity : AppCompatActivity() {
         searchButton.setOnClickListener {
             System.out.println(budgetBar.progress)
             dataList.clear()
-//            for (item in filterByPricing(0,budgetBar.progress,tutorList)) {
-//                dataList.add(item.name)
-//            }
-            for (item in subjectFilter(subjectInput.text.toString(), tutorList)) {
+            for (item in filterByPricing(0,budgetBar.progress,tutorList)) {
                 dataList.add(item.name)
             }
+//            for (item in homeworkIntensityFilter(subjectInput.text.toString(), tutorList)) {
+//                dataList.add(item.name)
+//            }
             adapter.notifyDataSetChanged()
         }
     }
@@ -67,6 +67,15 @@ class MainActivity : AppCompatActivity() {
         val results = ArrayList<Tutor>()
         for(item in tutorList){
             if(item.subjects.contains(subject)){
+                results.add(item)
+            }
+        }
+        return results
+    }
+    fun homeworkIntensityFilter(intensity : String, tutorList: ArrayList<Tutor>) : ArrayList<Tutor>{
+        val results = ArrayList<Tutor>()
+        for (item in tutorList) {
+            if (item.homeworkIntensity.equals(intensity)) {
                 results.add(item)
             }
         }
