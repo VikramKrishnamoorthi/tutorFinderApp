@@ -3,26 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/startFragment">
 
+    <!-- Start Screen with Sign In / Sign Up -->
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.example.myapplication.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        android:id="@+id/startFragment"
+        android:name="com.example.tutorfinderapp.MainActivity"
+        android:label="Start"
+        tools:layout="@layout/activity_main">
 
+        <!-- Navigate to RoleSelectionFragment -->
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_startFragment_to_roleSelectionFragment"
+            app:destination="@id/roleSelectionFragment" />
     </fragment>
+
+    <!-- Role Selection Screen with Tutor / Student -->
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.example.myapplication.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
+        android:id="@+id/roleSelectionFragment"
+        android:name="com.example.tutorfinderapp.RoleSelectionActivity"
+        android:label="Role Selection"
+        tools:layout="@layout/student_tutor_selection">
 
+        <!-- Optional: back to StartFragment -->
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_roleSelectionFragment_to_startFragment"
+            app:destination="@id/startFragment" />
     </fragment>
+
 </navigation>
