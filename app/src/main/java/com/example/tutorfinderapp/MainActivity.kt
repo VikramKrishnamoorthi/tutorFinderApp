@@ -41,9 +41,71 @@ class MainActivity : AppCompatActivity() {
         val dataList = ArrayList<String>()
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, dataList)
         searchOutput.adapter = adapter
-        tutorList.add(Tutor("placeholder",18, 30, arrayListOf("calculus", "physics"), "Monday 5-10 pm", "low", "loremIpsum@fakeMail.abc", "1234567890"))
-        tutorList.add(Tutor("another",18, 45, arrayListOf("english", "composition"), "Monday 5-10 pm", "medium", "loremIpsum@fakeMail.abc", "1234567890"))
-        tutorList.add(Tutor("three",18, 25, arrayListOf("abcde", "fghij"), "Monday 5-10 pm", "high", "loremIpsum@fakeMail.abc", "1234567890"))
+        tutorList.add(
+            Tutor(
+                name = "Alice Johnson",
+                age = 29,
+                pricing = 25,
+                subjects = arrayListOf("Math", "Physics"),
+                availability = "Mon-Fri, 3-7 PM",
+                homeworkIntensity = "medium",
+                email = "alice.johnson@example.com",
+                phoneNumber = "555-123-4567"
+            )
+        )
+
+        tutorList.add(
+            Tutor(
+                name = "Brian Smith",
+                age = 34,
+                pricing = 30,
+                subjects = arrayListOf("English", "History"),
+                availability = "Weekends, 10 AM - 4 PM",
+                homeworkIntensity = "low",
+                email = "brian.smith@example.com",
+                phoneNumber = "555-987-6543"
+            )
+        )
+
+        tutorList.add(
+            Tutor(
+                name = "Carla Ramirez",
+                age = 27,
+                pricing = 20,
+                subjects = arrayListOf("Biology", "Chemistry"),
+                availability = "Tue & Thu, 5-9 PM",
+                homeworkIntensity = "high",
+                email = "carla.ramirez@example.com",
+                phoneNumber = "555-456-7890"
+            )
+        )
+
+        tutorList.add(
+            Tutor(
+                name = "David Kim",
+                age = 40,
+                pricing = 35,
+                subjects = arrayListOf("Computer Science", "Math"),
+                availability = "Mon-Sat, 6-10 PM",
+                homeworkIntensity = "medium",
+                email = "david.kim@example.com",
+                phoneNumber = "555-111-2222"
+            )
+        )
+
+        tutorList.add(
+            Tutor(
+                name = "Emma Wilson",
+                age = 31,
+                pricing = 28,
+                subjects = arrayListOf("Art", "English"),
+                availability = "Wed & Fri, 2-6 PM",
+                homeworkIntensity = "low",
+                email = "emma.wilson@example.com",
+                phoneNumber = "555-333-4444"
+            )
+        )
+        // sample data from GPT
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
