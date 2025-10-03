@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.provider.ContactsContract
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
+import android.widget.ListView
 import android.widget.SeekBar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +19,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tutorList : ArrayList<Tutor>
     private lateinit var budgetBar : SeekBar
     private lateinit var searchButton : Button
-    private lateinit var searchOutput : RecyclerView
+    private lateinit var searchOutput : ListView
+    private lateinit var subjectInput : EditText
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,11 +28,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         budgetBar = findViewById<SeekBar>(R.id.budgetSelector)
         searchButton = findViewById<Button>(R.id.searchButton)
-        searchOutput = findViewById<RecyclerView>(R.id.searchOutput)
+        searchOutput = findViewById<ListView>(R.id.searchOutput)
+        subjectInput = findViewById<EditText>(R.id.subjectInput)
         tutorList = ArrayList<Tutor>()
         val dataList = ArrayList<String>()
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, dataList)
+        searchOutput.adapter = adapter
         tutorList.add(Tutor("placeholder",18, 30, arrayListOf("calculus", "physics"), "Monday 5-10 pm", "low", "loremIpsum@fakeMail.abc", "1234567890"))
+        tutorList.add(Tutor("another",18, 45, arrayListOf("english", "composition"), "Monday 5-10 pm", "medium", "loremIpsum@fakeMail.abc", "1234567890"))
+        tutorList.add(Tutor("three",18, 25, arrayListOf("abcde", "fghij"), "Monday 5-10 pm", "high", "loremIpsum@fakeMail.abc", "1234567890"))
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -37,6 +44,14 @@ class MainActivity : AppCompatActivity() {
         }
         searchButton.setOnClickListener {
             System.out.println(budgetBar.progress)
+            dataList.clear()
+//            for (item in filterByPricing(0,budgetBar.progress,tutorList)) {
+//                dataList.add(item.name)
+//            }
+            for (item in subjectFilter(subjectInput.text.toString(), tutorList)) {
+                dataList.add(item.name)
+            }
+            adapter.notifyDataSetChanged()
         }
     }
     fun filterByPricing(lowerLimit : Int, upperLimit : Int, arrayList : ArrayList<Tutor>) : ArrayList<Tutor>{
@@ -47,5 +62,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return result
+    }
+    fun subjectFilter(subject : String, tutorList : ArrayList<Tutor>) : ArrayList<Tutor>{
+        val results = ArrayList<Tutor>()
+        for(item in tutorList){
+            if(item.subjects.contains(subject)){
+                results.add(item)
+            }
+        }
+        return results
     }
 }

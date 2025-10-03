@@ -11,14 +11,12 @@
         android:id="@+id/budgetSelector"
         android:layout_width="358dp"
         android:layout_height="37dp"
-        android:layout_marginStart="18dp"
-        android:layout_marginTop="75dp"
-        android:layout_marginEnd="35dp"
-        android:layout_marginBottom="619dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.301"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.023" />
 
     <Button
         android:id="@+id/searchButton"
@@ -31,10 +29,12 @@
         android:text="Search"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.472"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/budgetSelector" />
+        app:layout_constraintTop_toBottomOf="@+id/budgetSelector"
+        app:layout_constraintVertical_bias="0.647" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <ListView
         android:id="@+id/searchOutput"
         android:layout_width="409dp"
         android:layout_height="520dp"
@@ -45,4 +45,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchButton" />
+
+    <EditText
+        android:id="@+id/subjectInput"
+        android:layout_width="279dp"
+        android:layout_height="57dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="subject"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.108" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
