@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.SeekBar
+import android.widget.Spinner
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var searchButton : Button
     private lateinit var searchOutput : ListView
     private lateinit var subjectInput : EditText
+    private lateinit var intensityInput : Spinner
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +33,11 @@ class MainActivity : AppCompatActivity() {
         searchOutput = findViewById<ListView>(R.id.searchOutput)
         subjectInput = findViewById<EditText>(R.id.subjectInput)
         tutorList = ArrayList<Tutor>()
+        intensityInput = findViewById<Spinner>(R.id.homeworkIntensityInput)
+        val intensities = arrayListOf<String>("low", "medium", "high", "any")
+        val intensityAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, intensities)
+        intensityInput.adapter = intensityAdapter
+        intensityAdapter.notifyDataSetChanged()
         val dataList = ArrayList<String>()
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, dataList)
         searchOutput.adapter = adapter
@@ -45,12 +52,9 @@ class MainActivity : AppCompatActivity() {
         searchButton.setOnClickListener {
             System.out.println(budgetBar.progress)
             dataList.clear()
-            for (item in filterByPricing(0,budgetBar.progress,tutorList)) {
+            for (item in filterByPricing(0, budgetBar.progress, subjectFilter(subjectInput.text.toString(), homeworkIntensityFilter(intensityInput.selectedItem.toString(), tutorList)))){
                 dataList.add(item.name)
             }
-//            for (item in homeworkIntensityFilter(subjectInput.text.toString(), tutorList)) {
-//                dataList.add(item.name)
-//            }
             adapter.notifyDataSetChanged()
         }
     }
@@ -75,7 +79,7 @@ class MainActivity : AppCompatActivity() {
     fun homeworkIntensityFilter(intensity : String, tutorList: ArrayList<Tutor>) : ArrayList<Tutor>{
         val results = ArrayList<Tutor>()
         for (item in tutorList) {
-            if (item.homeworkIntensity.equals(intensity)) {
+            if (item.homeworkIntensity.equals(intensity) || intensity.equals("any")) {
                 results.add(item)
             }
         }
