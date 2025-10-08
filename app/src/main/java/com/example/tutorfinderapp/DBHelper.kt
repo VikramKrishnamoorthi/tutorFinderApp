@@ -1,16 +1,16 @@
-package com.example.sqlstuff
+package com.example.tutorfinderapp.app
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.google.gson.Gson
 
-//The. comments you'll see are made to help you understand what each function does -Vikram
+// The comments below are meant to help you understand what each function does - Vikram
 
 class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
+
     override fun onCreate(db: SQLiteDatabase) {
         val createTableQuery = """
             CREATE TABLE $TABLE_NAME (
@@ -21,26 +21,33 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
                 $SUBJECTS_COL TEXT,
                 $AVAILABILITY_COL TEXT,
                 $GIVESHOMEWORK_COL TEXT,
-                $CONTACT_COL TEXT
+                $CONTACTPHONE_COL TEXT,
+                $CONTACTEMAIL_COL TEXT,
+                $STUDENTS_COL TEXT
             )
         """.trimIndent()
 
         db.execSQL(createTableQuery)
     }
-    //This runs when the db is created and isn't run again until onUpgrade runs
+    // Runs once when the database is first created and when it is updated
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
         onCreate(db)
     }
-    //This updates the db with a new tutor, runs when new tutor is inserted
+    // Runs when upgrading database version; recreates table(see up there)
 
-    fun addTutor(name: String, ageRange: String, payment: String, subjects: String, availability: String,
-                 givesHomework: String, contactInfo: ContactInfo) {
-        val gson = Gson()
-        val contactJson = gson.toJson(contactInfo)
-        //If you open this for the first time this will be an error. You need to press the sync option that will show up and it'll work
-
+    fun addTutor(
+        name: String,
+        ageRange: String,
+        payment: String,
+        subjects: String,
+        availability: String, // Simple plain text like "Mon 3–5 PM, Wed 1–2 PM"
+        givesHomework: String, // can't use a boolean so will use string that will say "true" or "false"
+        contactPhone: String,
+        contactEmail: String,
+        students: String // Comma list of names in place of an arraylist "Alice, Bob, Charlie"
+    ) {
         val values = ContentValues().apply {
             put(NAME_COL, name)
             put(AGERANGE_COL, ageRange)
@@ -48,39 +55,33 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             put(SUBJECTS_COL, subjects)
             put(AVAILABILITY_COL, availability)
             put(GIVESHOMEWORK_COL, givesHomework)
-            put(CONTACT_COL, contactJson)
+            put(CONTACTPHONE_COL, contactPhone)
+            put(CONTACTEMAIL_COL, contactEmail)
+            put(STUDENTS_COL, students)
         }
 
         writableDatabase.use { db ->
             db.insert(TABLE_NAME, null, values)
         }
     }
-    //Cretes new row in table for new tutor and inserts it in
+    // Inserts a new tutor into the database
 
     fun getTutors(): Cursor {
         return readableDatabase.rawQuery("SELECT * FROM $TABLE_NAME", null)
     }
+    // Returns all tutors in the database
 
     fun getTutorById(tutorId: Int): Cursor {
-        val db = readableDatabase
-        return db.rawQuery("SELECT * FROM $TABLE_NAME WHERE $ID_COL = ?", arrayOf(tutorId.toString()))
+        return readableDatabase.rawQuery(
+            "SELECT * FROM $TABLE_NAME WHERE $ID_COL = ?",
+            arrayOf(tutorId.toString())
+        )
     }
-
-    //To use these functions, you have to do "DBHelper.getTutorById = someVariable"
-    //The cursor returned is a set of successful searches for the info and you can
-    //loop through all of the info with a while(!someVariable.isAfterLast()) which checks if the
-    //selector has not gone out of bounds
-
-
-
-    data class ContactInfo(
-        val phone: String,
-        val email: String
-    )
+    // Returns one tutor by their ID
 
     companion object {
         private const val DATABASE_NAME = "Tutors"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 3 // incremented since schema changed
         const val TABLE_NAME = "tutor_table"
 
         const val ID_COL = "id"
@@ -90,6 +91,8 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         const val SUBJECTS_COL = "subjects"
         const val AVAILABILITY_COL = "availability"
         const val GIVESHOMEWORK_COL = "gives_homework"
-        const val CONTACT_COL = "contact_info"
+        const val CONTACTPHONE_COL = "contact_phone"
+        const val CONTACTEMAIL_COL = "contact_email"
+        const val STUDENTS_COL = "students"
     }
 }
