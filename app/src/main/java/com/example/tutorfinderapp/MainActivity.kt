@@ -1,6 +1,7 @@
 package com.example.tutorfinderapp
 
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.widget.ArrayAdapter
@@ -14,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tutorfinderapp.app.DBHelper
+import com.example.tutorfinderapp.app.DBHelper.Companion.ID_COL
 
 
 class MainActivity : AppCompatActivity() {
@@ -23,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var searchOutput : ListView
     private lateinit var subjectInput : EditText
     private lateinit var intensityInput : Spinner
+    private lateinit var db : DBHelper
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,73 +43,74 @@ class MainActivity : AppCompatActivity() {
         intensityInput.adapter = intensityAdapter
         intensityAdapter.notifyDataSetChanged()
         val dataList = ArrayList<String>()
+        db = DBHelper(this, null)
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, dataList)
         searchOutput.adapter = adapter
-        tutorList.add(
-            Tutor(
-                name = "Alice Johnson",
-                age = 29,
-                pricing = 25,
-                subjects = arrayListOf("Math", "Physics"),
-                availability = "Mon-Fri, 3-7 PM",
-                homeworkIntensity = "medium",
-                email = "alice.johnson@example.com",
-                phoneNumber = "555-123-4567"
-            )
-        )
-
-        tutorList.add(
-            Tutor(
-                name = "Brian Smith",
-                age = 34,
-                pricing = 30,
-                subjects = arrayListOf("English", "History"),
-                availability = "Weekends, 10 AM - 4 PM",
-                homeworkIntensity = "low",
-                email = "brian.smith@example.com",
-                phoneNumber = "555-987-6543"
-            )
-        )
-
-        tutorList.add(
-            Tutor(
-                name = "Carla Ramirez",
-                age = 27,
-                pricing = 20,
-                subjects = arrayListOf("Biology", "Chemistry"),
-                availability = "Tue & Thu, 5-9 PM",
-                homeworkIntensity = "high",
-                email = "carla.ramirez@example.com",
-                phoneNumber = "555-456-7890"
-            )
-        )
-
-        tutorList.add(
-            Tutor(
-                name = "David Kim",
-                age = 40,
-                pricing = 35,
-                subjects = arrayListOf("Computer Science", "Math"),
-                availability = "Mon-Sat, 6-10 PM",
-                homeworkIntensity = "medium",
-                email = "david.kim@example.com",
-                phoneNumber = "555-111-2222"
-            )
-        )
-
-        tutorList.add(
-            Tutor(
-                name = "Emma Wilson",
-                age = 31,
-                pricing = 28,
-                subjects = arrayListOf("Art", "English"),
-                availability = "Wed & Fri, 2-6 PM",
-                homeworkIntensity = "low",
-                email = "emma.wilson@example.com",
-                phoneNumber = "555-333-4444"
-            )
-        )
         // sample data from GPT
+//        db.addTutor(
+//            name = "Alice Johnson",
+//            ageRange = "29",
+//            payment = "25",
+//            subjects = "Math, Physics",
+//            availability = "Mon 3-7 PM",
+//            givesHomework = "medium",
+//            contactPhone = "555-123-4567",
+//            contactEmail = "alice.johnson@example.com",
+//            students = ""
+//        )
+        db.addTutor("test","25","30","Math","Mondays","none","123-456-7890","loremipsum@fakemail.com","")
+
+//        tutorList.add(
+//            Tutor(
+//                name = "Brian Smith",
+//                age = 34,
+//                pricing = 30,
+//                subjects = arrayListOf("English", "History"),
+//                availability = "Weekends, 10 AM - 4 PM",
+//                homeworkIntensity = "low",
+//                email = "brian.smith@example.com",
+//                phoneNumber = "555-987-6543"
+//            )
+//        )
+//
+//        tutorList.add(
+//            Tutor(
+//                name = "Carla Ramirez",
+//                age = 27,
+//                pricing = 20,
+//                subjects = arrayListOf("Biology", "Chemistry"),
+//                availability = "Tue & Thu, 5-9 PM",
+//                homeworkIntensity = "high",
+//                email = "carla.ramirez@example.com",
+//                phoneNumber = "555-456-7890"
+//            )
+//        )
+//
+//        tutorList.add(
+//            Tutor(
+//                name = "David Kim",
+//                age = 40,
+//                pricing = 35,
+//                subjects = arrayListOf("Computer Science", "Math"),
+//                availability = "Mon-Sat, 6-10 PM",
+//                homeworkIntensity = "medium",
+//                email = "david.kim@example.com",
+//                phoneNumber = "555-111-2222"
+//            )
+//        )
+//
+//        tutorList.add(
+//            Tutor(
+//                name = "Emma Wilson",
+//                age = 31,
+//                pricing = 28,
+//                subjects = arrayListOf("Art", "English"),
+//                availability = "Wed & Fri, 2-6 PM",
+//                homeworkIntensity = "low",
+//                email = "emma.wilson@example.com",
+//                phoneNumber = "555-333-4444"
+//            )
+//        )
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -119,6 +124,8 @@ class MainActivity : AppCompatActivity() {
             }
             adapter.notifyDataSetChanged()
         }
+        getTutors()
+        addStudent(tutorList[0],"lorem ipsum")
     }
     fun filterByPricing(lowerLimit : Int, upperLimit : Int, arrayList : ArrayList<Tutor>) : ArrayList<Tutor>{
         val result = ArrayList<Tutor>()
@@ -146,5 +153,30 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return results
+    }
+    fun getTutors(){
+        val cursor = db.getTutors()
+        cursor.moveToFirst()
+        cursor.use {
+            while (it.moveToNext()) {
+                tutorList.add(Tutor(it.getString(it.getColumnIndexOrThrow("name")),it.getString(it.getColumnIndexOrThrow("age_range")).toInt(),it.getString(it.getColumnIndexOrThrow("payment")).toInt(),it.getString(it.getColumnIndexOrThrow("subjects")),it.getString(it.getColumnIndexOrThrow("availability")),it.getString(it.getColumnIndexOrThrow("gives_homework")),it.getString(it.getColumnIndexOrThrow("contact_email")),it.getString(it.getColumnIndexOrThrow("contact_phone")),it.getString(it.getColumnIndexOrThrow("students")),it.getInt(it.getColumnIndexOrThrow("id"))))
+            }
+        }
+//        System.out.println(cursor.getString(cursor.getColumnIndexOrThrow("name")))
+    }
+    fun addStudent(tutor: Tutor, studentName : String){
+        tutor.students = tutor.students + ", " + studentName
+        val dataBaseWriter = db.writableDatabase
+        val values = ContentValues().apply {
+            put("students", tutor.students)
+        }
+        val selection = "$ID_COL = ?"
+        val selectionArgs = arrayOf(tutor.id.toString())
+        val count = dataBaseWriter.update(
+            "tutor_table",
+            values,
+            selection,
+            selectionArgs
+        )
     }
 }
