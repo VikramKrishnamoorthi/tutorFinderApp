@@ -1,0 +1,34 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tutorWelcomeTxt"
+        android:text="Welcome, Tutor!"
+        android:textSize="22sp"
+        android:textColor="#3D348B"
+        android:layout_marginBottom="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/editProfileBtn"
+        android:text="Edit Profile"
+        android:backgroundTint="#7678ED"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/viewStudentsBtn"
+        android:text="View My Students"
+        android:backgroundTint="#F7B801"
+        android:textColor="@android:color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

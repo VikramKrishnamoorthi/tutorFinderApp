@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">tutorFinderApp</string>
+    <string-array name="subject_options">
+        <item>All</item>
+        <item>Math</item>
+        <item>Science</item>
+        <item>English</item>
+        <item>History</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="payment_options">
+        <item>All</item>
+        <item>&lt; $20</item>
+        <item>$20 - $40</item>
+        <item>$40+</item>
+    </string-array>
+
+    <string-array name="availability_options">
+        <item>All</item>
+        <item>Weekdays</item>
+        <item>Evenings</item>
+        <item>Weekends</item>
+    </string-array>
 </resources>
