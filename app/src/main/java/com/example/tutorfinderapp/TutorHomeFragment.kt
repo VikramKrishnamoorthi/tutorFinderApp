@@ -38,18 +38,18 @@ class TutorHomeFragment : Fragment() {
                 .commit()
         }
 
-//        binding.viewStudentsBtn.setOnClickListener {
-//            val fragment = TutorStudentsFragment()
-//            val bundle = Bundle().apply {
-//                putString("TUTOR_EMAIL", tutorEmail)
-//            }
-//            fragment.arguments = bundle
-//
-//            parentFragmentManager.beginTransaction()
-//                .replace(R.id.fragment_container, fragment)
-//                .addToBackStack(null)
-//                .commit()
-//        }
+        binding.viewStudentsBtn.setOnClickListener {
+            val fragment = MyStudentsFragment()
+            val bundle = Bundle().apply {
+                putString("TUTOR_EMAIL", tutorEmail)
+            }
+            fragment.arguments = bundle
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     override fun onDestroyView() {

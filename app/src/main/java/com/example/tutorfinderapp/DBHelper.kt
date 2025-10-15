@@ -215,44 +215,34 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         return name
     }
 
-    // Optional: get whole tutor object as a simple map (convenience)
-    fun getTutorMapByEmail(email: String): Map<String, String> {
-        val map = mutableMapOf<String, String>()
-        val c = getTutorByEmail(email)
-        if (c.moveToFirst()) {
-            map[TUTOR_NAME] = c.getString(c.getColumnIndexOrThrow(TUTOR_NAME)) ?: ""
-            map[TUTOR_AGE_RANGE] = c.getString(c.getColumnIndexOrThrow(TUTOR_AGE_RANGE)) ?: ""
-            map[TUTOR_PAYMENT] = c.getString(c.getColumnIndexOrThrow(TUTOR_PAYMENT)) ?: ""
-            map[TUTOR_SUBJECTS] = c.getString(c.getColumnIndexOrThrow(TUTOR_SUBJECTS)) ?: ""
-            map[TUTOR_AVAILABILITY] = c.getString(c.getColumnIndexOrThrow(TUTOR_AVAILABILITY)) ?: ""
-            map[TUTOR_GIVES_HOMEWORK] = c.getString(c.getColumnIndexOrThrow(TUTOR_GIVES_HOMEWORK)) ?: ""
-            map[TUTOR_PHONE] = c.getString(c.getColumnIndexOrThrow(TUTOR_PHONE)) ?: ""
-            map[TUTOR_EMAIL] = c.getString(c.getColumnIndexOrThrow(TUTOR_EMAIL)) ?: ""
-            map[TUTOR_STUDENTS] = c.getString(c.getColumnIndexOrThrow(TUTOR_STUDENTS)) ?: ""
-        }
-        c.close()
-        return map
-    }
-
     fun String.splitStringintoArray(): List<String> {
         return this.split(",")
             .map { it.trim() }
             .filter { it.isNotEmpty() }
     }
 
-    fun studentsofTutor(email : String): List<Pair<String, String>>  {
+    fun studentsofTutor(email: String): List<Pair<String, String>> {
         val studentsList = mutableListOf<Pair<String, String>>()
-        val tutorCursor =
-            getTutorByEmail(email)
+        val tutorCursor = getTutorByEmail(email)
 
-        val studentEmailString = tutorCursor.getString(tutorCursor.getColumnIndexOrThrow(TUTOR_STUDENTS))
-        val studentEmailarray = studentEmailString.splitStringintoArray()
-        for(email in studentEmailarray){
-            studentsList.add(Pair(email, getStudentNameByEmail(email)) as Pair<String, String>)
+        if (tutorCursor.moveToFirst()) {
+            val studentsIndex = tutorCursor.getColumnIndex(TUTOR_STUDENTS)
+            if (studentsIndex != -1) {
+                val studentEmailString = tutorCursor.getString(studentsIndex) ?: ""
+                val studentEmailArray = studentEmailString.splitStringintoArray()
+
+                for (studentEmail in studentEmailArray) {
+                    val studentName = getStudentNameByEmail(studentEmail)
+                    if (studentName != null) {
+                        studentsList.add(Pair(studentEmail, studentName))
+                    }
+                }
+            }
         }
-        tutorCursor.close()
 
+        tutorCursor.close()
         return studentsList
     }
+
 
 }

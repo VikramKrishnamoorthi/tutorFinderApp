@@ -1,11 +1,7 @@
 package com.example.tutorfinderapp
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.ListView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.tutorfinderapp.app.DBHelper
@@ -13,12 +9,11 @@ import com.example.tutorfinderapp.databinding.FragmentMyStudentsBinding
 
 class MyStudentsFragment : Fragment() {
 
-    private lateinit var dbHelper: DBHelper
-    private lateinit var studentListView: ListView
-    private var tutorEmail: String? = null
-
     private var _binding: FragmentMyStudentsBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var dbHelper: DBHelper
+    private var tutorEmail: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,37 +21,49 @@ class MyStudentsFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: android.view.LayoutInflater, container: android.view.ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): android.view.View {
         _binding = FragmentMyStudentsBinding.inflate(inflater, container, false)
-        val view = binding.root
-
         dbHelper = DBHelper(requireContext(), null)
-        studentListView = view.findViewById(R.id.studentListView)
-        loadStudents()
+
+        // Back button
         binding.backBtn.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
-        return view
+        // Load students safely
+        try {
+            loadStudents()
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "Error loading students: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+
+        return binding.root
     }
 
     private fun loadStudents() {
-        if (tutorEmail == null) {
-            Toast.makeText(requireContext(), "Tutor email not found", Toast.LENGTH_SHORT).show()
+        val email = tutorEmail
+        if (email.isNullOrBlank()) {
+            Toast.makeText(requireContext(), "Tutor email not provided", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val students = dbHelper.studentsofTutor(tutorEmail!!)
+        // Safe call to DBHelper
+        val students = try {
+            dbHelper.studentsofTutor(email) ?: emptyList()
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "DB error: ${e.message}", Toast.LENGTH_LONG).show()
+            return
+        }
 
         if (students.isEmpty()) {
             Toast.makeText(requireContext(), "No students found", Toast.LENGTH_SHORT).show()
+            binding.studentListView.adapter = null
             return
         }
-        val studentNames = students.map { pair ->
-            "${pair.second} (${pair.first})"
-        }
+
+        val studentNames = students.map { pair -> "${pair.second} (${pair.first})" }
 
         val adapter = ArrayAdapter(
             requireContext(),
@@ -64,7 +71,7 @@ class MyStudentsFragment : Fragment() {
             studentNames
         )
 
-        studentListView.adapter = adapter
+        binding.studentListView.adapter = adapter
     }
 
     override fun onDestroyView() {

@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.tutorfinderapp.app.DBHelper
+import com.example.tutorfinderapp.databinding.FragmentTutorFinderBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,37 +20,38 @@ import kotlinx.coroutines.withContext
 class TutorFinderFragment : Fragment() {
 
     private lateinit var dbHelper: DBHelper
-    private lateinit var recycler: RecyclerView
     private lateinit var adapter: TutorAdapter
     private var allTutors = mutableListOf<TutorModel>()
-    private var studentEmail: String = "student@example.com" // fallback
+    private var studentEmail: String = "student@example.com"
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_tutor_finder, container, false)
+    private var _binding: FragmentTutorFinderBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentTutorFinderBinding.inflate(inflater, container, false)
+
         dbHelper = DBHelper(requireContext(), null)
-        recycler = view.findViewById(R.id.tutorRecycler)
-        recycler.layoutManager = LinearLayoutManager(requireContext())
+
+        // RecyclerView setup
+        binding.tutorRecycler.layoutManager = LinearLayoutManager(requireContext())
         adapter = TutorAdapter(listOf()) { tutor ->
-            // Request tutor: add relation student <-> tutor (on IO thread)
+            // Request tutor
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
-                    // 1) add student to tutor's students list
-                    val tutorsCursor = dbHelper.getTutors()
-                    // we will update by tutor email
                     val existingStudents = getTutorStudentsString(tutor.email)
                     val updatedStudents = if (existingStudents.isBlank()) studentEmail else "$existingStudents,$studentEmail"
                     dbHelper.updateTutorStudents(tutor.email, updatedStudents)
 
-                    // 2) add tutor to student's tutors list
                     val studentExistingTutors = getStudentTutorsString(studentEmail)
                     val updatedTutors = if (studentExistingTutors.isBlank()) tutor.name else "$studentExistingTutors,${tutor.name}"
                     dbHelper.updateStudentTutors(studentEmail, updatedTutors)
 
-                    // refresh UI on main
                     withContext(Dispatchers.Main) {
                         Toast.makeText(requireContext(), "Requested ${tutor.name}", Toast.LENGTH_SHORT).show()
-                        loadTutorsAndShow() // refresh list to reflect changes if you want
+                        loadTutorsAndShow()
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
@@ -57,18 +60,24 @@ class TutorFinderFragment : Fragment() {
                 }
             }
         }
-        recycler.adapter = adapter
+        binding.tutorRecycler.adapter = adapter
 
-        // filters
-        val subjectSpinner = view.findViewById<Spinner>(R.id.subjectFilter)
-        val paymentSpinner = view.findViewById<Spinner>(R.id.paymentFilter)
-        val availabilitySpinner = view.findViewById<Spinner>(R.id.availabilityFilter)
-        val resetFab = view.findViewById<View>(R.id.resetFab)
+        binding.backBtn.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
+        val subjectSpinner: Spinner = binding.subjectFilter
+        val paymentSpinner: Spinner = binding.paymentFilter
+        val availabilitySpinner: Spinner = binding.availabilityFilter
 
-        // student email from args (if provided by login)
+        binding.resetFab.setOnClickListener {
+            subjectSpinner.setSelection(0)
+            paymentSpinner.setSelection(0)
+            availabilitySpinner.setSelection(0)
+            applyFilters()
+        }
+
         arguments?.getString("STUDENT_EMAIL")?.let { studentEmail = it }
 
-        // populate spinners
         subjectSpinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item,
             resources.getStringArray(R.array.subject_options)).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -82,31 +91,29 @@ class TutorFinderFragment : Fragment() {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
 
-        val listener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
+        val listener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>, view: View?, pos: Int, id: Long) {
                 applyFilters()
             }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>) {}
         }
 
         subjectSpinner.onItemSelectedListener = listener
         paymentSpinner.onItemSelectedListener = listener
         availabilitySpinner.onItemSelectedListener = listener
 
-        resetFab.setOnClickListener {
-            subjectSpinner.setSelection(0)
-            paymentSpinner.setSelection(0)
-            availabilitySpinner.setSelection(0)
-            applyFilters()
-        }
-
         // initial load
         loadTutorsAndShow()
-        return view
+
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun getTutorStudentsString(tutorEmail: String): String {
-        // read cursor to find the tutor and return students column
         val c: Cursor = dbHelper.getTutors()
         var students = ""
         while (c.moveToNext()) {
@@ -158,10 +165,9 @@ class TutorFinderFragment : Fragment() {
     }
 
     private fun applyFilters() {
-        // read spinner values from UI thread
-        val subject = view?.findViewById<Spinner>(R.id.subjectFilter)?.selectedItem.toString()
-        val payment = view?.findViewById<Spinner>(R.id.paymentFilter)?.selectedItem.toString()
-        val availability = view?.findViewById<Spinner>(R.id.availabilityFilter)?.selectedItem.toString()
+        val subject = binding.subjectFilter.selectedItem.toString()
+        val payment = binding.paymentFilter.selectedItem.toString()
+        val availability = binding.availabilityFilter.selectedItem.toString()
 
         val filtered = allTutors.filter { t ->
             val okSubject = (subject == "All") || t.subjects.contains(subject, ignoreCase = true)
@@ -172,6 +178,12 @@ class TutorFinderFragment : Fragment() {
         adapter.updateList(filtered)
     }
 
-    // lightweight model
-    data class TutorModel(val id: Int, val name: String, val subjects: String, val payment: String, val availability: String, val email: String)
+    data class TutorModel(
+        val id: Int,
+        val name: String,
+        val subjects: String,
+        val payment: String,
+        val availability: String,
+        val email: String
+    )
 }
