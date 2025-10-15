@@ -25,18 +25,18 @@ class TutorHomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.tutorWelcomeTxt.text = "Welcome, $tutorEmail!"
 
-//        binding.editProfileBtn.setOnClickListener {
-//            val fragment = TutorProfileFragment()
-//            val bundle = Bundle().apply {
-//                putString("TUTOR_EMAIL", tutorEmail)
-//            }
-//            fragment.arguments = bundle
-//
-//            parentFragmentManager.beginTransaction()
-//                .replace(R.id.fragment_container, fragment)
-//                .addToBackStack(null)
-//                .commit()
-//        }
+        binding.editProfileBtn.setOnClickListener {
+            val fragment = TutorProfileFragment()
+            val bundle = Bundle().apply {
+                putString("TUTOR_EMAIL", tutorEmail)
+            }
+            fragment.arguments = bundle
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
 
 //        binding.viewStudentsBtn.setOnClickListener {
 //            val fragment = TutorStudentsFragment()

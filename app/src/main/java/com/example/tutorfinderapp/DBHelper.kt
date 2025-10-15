@@ -240,4 +240,19 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             .filter { it.isNotEmpty() }
     }
 
+    fun studentsofTutor(email : String): List<Pair<String, String>>  {
+        val studentsList = mutableListOf<Pair<String, String>>()
+        val tutorCursor =
+            getTutorByEmail(email)
+
+        val studentEmailString = tutorCursor.getString(tutorCursor.getColumnIndexOrThrow(TUTOR_STUDENTS))
+        val studentEmailarray = studentEmailString.splitStringintoArray()
+        for(email in studentEmailarray){
+            studentsList.add(Pair(email, getStudentNameByEmail(email)) as Pair<String, String>)
+        }
+        tutorCursor.close()
+
+        return studentsList
+    }
+
 }

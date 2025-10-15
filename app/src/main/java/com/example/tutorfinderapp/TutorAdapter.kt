@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-
 class TutorAdapter(
     private var tutors: List<TutorFinderFragment.TutorModel>,
     private val onRequest: (TutorFinderFragment.TutorModel) -> Unit

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
+
+        <!-- Header -->
+        <TextView
+            android:id="@+id/profileHeader"
+            android:text="Tutor Profile"
+            android:textSize="24sp"
+            android:textColor="#3D348B"
+            android:layout_marginBottom="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!-- Name -->
+        <TextView
+            android:text="Name"
+            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/nameEditText"
+            android:hint="Enter name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Age Range -->
+        <TextView
+            android:text="Age Range"
+            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/ageRangeEditText"
+            android:hint="e.g., 10-15"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Payment -->
+        <TextView
+            android:text="Payment"
+            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/paymentEditText"
+            android:hint="e.g., $30/hr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Subjects -->
+        <TextView
+            android:text="Subjects"
+            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/subjectsEditText"
+            android:hint="Math, Science, ..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Availability -->
+        <TextView
+            android:text="Availability"
+            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/availabilityEditText"
+            android:hint="Weekdays, Weekends, ..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Gives Homework -->
+        <TextView
+            android:text="Gives Homework?"
+            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/givesHomeworkEditText"
+            android:hint="Yes or No"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Phone -->
+        <TextView
+            android:text="Phone"
+            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/phoneEditText"
+            android:hint="(123) 456-7890"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Email (read-only) -->
+        <TextView
+            android:text="Email"
+            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/emailEditText"
+            android:enabled="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/saveBtn"
+            android:text="Save Changes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#7678ED"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Back Button -->
+        <Button
+            android:id="@+id/backBtn"
+            android:text="Back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#F7B801"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- My Students -->
+        <TextView
+            android:text="My Students"
+            android:textSize="18sp"
+            android:textColor="#3D348B"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/studentsTxt"
+            android:text="Student1, Student2, ..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:background="#f0f0f0"/>
+
+    </LinearLayout>
+</ScrollView>
